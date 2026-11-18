@@ -1,7 +1,8 @@
 import streamlit as st
+from deep_translator import MyMemoryTranslator
 from gtts import gTTS
 import io
-from google import genai
+import time
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -57,43 +58,23 @@ if "saved_phrases" not in st.session_state:
     st.session_state.saved_phrases = []
 
 # --- HELPER FUNCTIONS ---
+@st.cache_data(ttl=3600, show_spinner=False)
+def translate_text(text: str) -> str:
+    if not text.strip():
+        return ""
+    time.sleep(0.2)
+    try:
+        # Uses MyMemory - 100% free, no API key needed
+        return MyMemoryTranslator(source="en", target="de").translate(text)
+    except Exception as e:
+        raise RuntimeError(f"Translation service error: {e}")
+
 def generate_audio(german_text: str):
     tts = gTTS(text=german_text, lang="de", slow=False)
     audio_fp = io.BytesIO()
     tts.write_to_fp(audio_fp)
     audio_fp.seek(0)
     return audio_fp
-
-@st.cache_data(ttl=3600, show_spinner=False)
-def translate_with_gemini(english_text: str, tone: str, api_key: str):
-    """Translates English to German using Gemini with precise formality and grammar breakdown."""
-    client = genai.Client(api_key=api_key)
-    prompt = f"""
-    You are an expert German language translator and tutor.
-    Translate this English text into German using the requested formality tone:
-    English: "{english_text}"
-    Formality Tone: {tone} (Informal 'du' vs Formal 'Sie')
-
-    Provide your response in this exact format:
-    ---TRANSLATION---
-    [The precise German translation only]
-    ---BREAKDOWN---
-    [1. **Key Vocabulary & Noun Genders:** List important nouns with their article (der/die/das) and plural form.
-    2. **Quick Grammar Tip:** One short, practical tip about word order or structure used here.]
-    """
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt,
-    )
-    
-    text = response.text
-    if "---TRANSLATION---" in text and "---BREAKDOWN---" in text:
-        parts = text.split("---BREAKDOWN---")
-        german_part = parts[0].replace("---TRANSLATION---", "").strip()
-        breakdown_part = parts[1].strip()
-        return german_part, breakdown_part
-    else:
-        return text.strip(), "Breakdown unavailable."
 
 # --- SIDEBAR: SETTINGS & SAVED FLASHCARDS ---
 with st.sidebar:
@@ -104,14 +85,6 @@ with st.sidebar:
         help="German distinguishes between casual ('du') and polite/professional ('Sie') speech."
     )
     
-    st.markdown("---")
-    st.markdown("### 🔑 Gemini API Key")
-    gemini_key = st.text_input(
-        "Enter API Key",
-        type="password",
-        help="Required to power the translator and AI tutor. Get a free key at aistudio.google.com"
-    )
-
     st.markdown("---")
     st.markdown("### 📚 Gender Color Guide")
     st.markdown(
@@ -168,41 +141,34 @@ with col_in:
 with col_out:
     st.markdown(f"#### 🇩🇪 Deutsch Output ({tone})")
     if english_input.strip():
-        if not gemini_key:
-            st.warning("⚠️ Please enter your Gemini API key in the sidebar to run translations.")
-        else:
-            try:
-                with st.spinner("Translating and analyzing grammar..."):
-                    german_output, breakdown = translate_with_gemini(english_input, tone, gemini_key)
-                
-                # Display output card
-                st.markdown(
-                    f"""
-                    <div class="output-card">
-                        <div class="german-text">{german_output}</div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+        try:
+            with st.spinner("Translating..."):
+                german_output = translate_text(english_input)
+            
+            # Display output card
+            st.markdown(
+                f"""
+                <div class="output-card">
+                    <div class="german-text">{german_output}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-                # Audio & Action Row
-                act_col1, act_col2 = st.columns([2, 1])
-                with act_col1:
-                    audio_bytes = generate_audio(german_output)
-                    st.audio(audio_bytes, format="audio/mp3")
-                with act_col2:
-                    if st.button("⭐ Save Flashcard", use_container_width=True):
-                        entry = {"en": english_input.strip(), "de": german_output}
-                        if entry not in st.session_state.saved_phrases:
-                            st.session_state.saved_phrases.append(entry)
-                            st.toast("Saved to your study deck!", icon="✅")
+            # Audio & Action Row
+            act_col1, act_col2 = st.columns([2, 1])
+            with act_col1:
+                audio_bytes = generate_audio(german_output)
+                st.audio(audio_bytes, format="audio/mp3")
+            with act_col2:
+                if st.button("⭐ Save Flashcard", use_container_width=True):
+                    entry = {"en": english_input.strip(), "de": german_output}
+                    if entry not in st.session_state.saved_phrases:
+                        st.session_state.saved_phrases.append(entry)
+                        st.toast("Saved to your study deck!", icon="✅")
 
-                # Grammar & Noun Genders Expander
-                with st.expander("🔍 Noun Genders & Grammar Breakdown", expanded=True):
-                    st.markdown(breakdown)
-
-            except Exception as e:
-                st.error(f"Translation error: {e}")
+        except Exception as e:
+            st.error(f"Translation error: {e}")
     else:
         st.markdown(
             """
