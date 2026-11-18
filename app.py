@@ -64,8 +64,8 @@ def translate_text(text: str) -> str:
         return ""
     time.sleep(0.2)
     try:
-        # Uses MyMemory - 100% free, no API key needed
-        return MyMemoryTranslator(source="en", target="de").translate(text)
+        # Uses MyMemory with required full regional locale codes
+        return MyMemoryTranslator(source="en-GB", target="de-DE").translate(text)
     except Exception as e:
         raise RuntimeError(f"Translation service error: {e}")
 
