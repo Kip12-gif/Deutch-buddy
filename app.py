@@ -2,7 +2,7 @@
 from deep_translator import GoogleTranslator
 from gtts import gTTS
 import io
-import os
+import time
 from google import genai
 
 # --- PAGE CONFIGURATION ---
@@ -63,11 +63,19 @@ st.markdown("""
 if "saved_phrases" not in st.session_state:
     st.session_state.saved_phrases = []
 
-# --- HELPER FUNCTIONS ---
+# --- HELPER FUNCTIONS WITH CACHING ---
+@st.cache_data(ttl=3600, show_spinner=False)
 def translate_text(text: str) -> str:
     if not text.strip():
         return ""
-    return GoogleTranslator(source="en", target="de").translate(text)
+    time.sleep(0.3)  # Gentle buffer for free server requests
+    try:
+        translator = GoogleTranslator(source="en", target="de")
+        return translator.translate(text)
+    except Exception as e:
+        if "too many requests" in str(e).lower():
+            raise RuntimeError("Google rate-limited this shared cloud IP temporarily. Please wait 30 seconds or try a slightly different phrasing.")
+        raise e
 
 def generate_audio(german_text: str):
     tts = gTTS(text=german_text, lang="de", slow=False)
@@ -116,8 +124,8 @@ with st.sidebar:
     st.markdown("---")
     st.markdown("### 📚 Gender Color Guide")
     st.markdown(
-        '<span class="badge-der">der</span> Masculine   '
-        '<span class="badge-die">die</span> Feminine   '
+        '<span class="badge-der">der</span> Masculine &nbsp; '
+        '<span class="badge-die">die</span> Feminine &nbsp; '
         '<span class="badge-das">das</span> Neuter',
         unsafe_allow_html=True
     )
