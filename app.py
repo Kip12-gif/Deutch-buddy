@@ -114,6 +114,8 @@ if "english_draft" not in st.session_state:
     st.session_state.english_draft = ""
 if "active_result" not in st.session_state:
     st.session_state.active_result = None
+if "phrasebook_audio" not in st.session_state:
+    st.session_state.phrasebook_audio = {}
 
 DIALECT_MAP = {
     "Standard German (Germany)": "de-DE",
@@ -137,7 +139,6 @@ def safe_load_json(filename: str, fallback):
     if not path:
         return fallback, f"{filename} not found (using built-in fallback)."
     try:
-        # utf-8-sig automatically strips any UTF-8 Byte Order Mark (BOM)
         with open(path, "r", encoding="utf-8-sig") as f:
             data = json.load(f)
         if not isinstance(data, type(fallback)):
@@ -567,31 +568,84 @@ with tab_translate:
             )
 
 with tab_phrasebook:
-    st.markdown("#### Browse Curated Offline Phrases")
+    st.markdown("#### Browse & Search Curated Offline Phrases")
     if not PHRASES_DATA:
         st.warning("No phrases.json file was detected in your repository.")
     else:
         categories = ["All Categories"] + sorted(
             {p.get("category", "General") for p in PHRASES_DATA}
         )
-        selected_cat = st.selectbox("Filter by Category", options=categories)
 
-        filtered = [
-            p
-            for p in PHRASES_DATA
-            if selected_cat == "All Categories" or p.get("category") == selected_cat
-        ]
-
-        for item in filtered:
-            german_line = item.get("du") if tone == "Informal (Du)" else item.get("sie")
-            st.markdown(
-                f"""
-                <div class="output-card">
-                    <span class="source-pill">{item.get("category", "General")} • {tone}</span>
-                    <div style="color:#A3E4D7; font-size:0.95rem; margin-bottom:4px;">🇬🇧 {item.get("en", "")}</div>
-                    <div class="german-text">🇩🇪 {german_line or ""}</div>
-                    <div class="meta-note">💡 {item.get("note", "")}</div>
-                </div>
-                """,
-                unsafe_allow_html=True,
+        flt_col1, flt_col2 = st.columns([2, 1])
+        with flt_col1:
+            search_query = st.text_input(
+                "Search keywords (English, German, category, or note)",
+                placeholder="e.g., coffee, train, Bahnhof, ticket, weekend...",
             )
+        with flt_col2:
+            selected_cat = st.selectbox("Filter by Category", options=categories)
+
+        kw = search_query.strip().lower()
+        filtered = []
+        for p in PHRASES_DATA:
+            cat_match = (
+                selected_cat == "All Categories"
+                or p.get("category", "General") == selected_cat
+            )
+            searchable_blob = " ".join(
+                [
+                    str(p.get("en", "")),
+                    str(p.get("du", "")),
+                    str(p.get("sie", "")),
+                    str(p.get("category", "")),
+                    str(p.get("note", "")),
+                ]
+            ).lower()
+            kw_match = not kw or (kw in searchable_blob)
+            if cat_match and kw_match:
+                filtered.append(p)
+
+        st.caption(f"Showing **{len(filtered)}** of **{len(PHRASES_DATA)}** phrases")
+
+        if not filtered:
+            st.info("No matching phrases found. Try clearing your keyword search or switching categories.")
+        else:
+            for idx, item in enumerate(filtered):
+                german_line = (
+                    item.get("du") if tone == "Informal (Du)" else item.get("sie")
+                ) or (item.get("du") or item.get("sie") or "")
+                phrase_key = f"{item.get('id', idx)}_{tone}_{'slow' if slow_audio else 'fast'}"
+
+                st.markdown(
+                    f"""
+                    <div class="output-card">
+                        <span class="source-pill">{item.get("category", "General")} • {tone}</span>
+                        <div style="color:#A3E4D7; font-size:0.95rem; margin-bottom:4px;">🇬🇧 {item.get("en", "")}</div>
+                        <div class="german-text">🇩🇪 {german_line}</div>
+                        <div class="meta-note">💡 {item.get("note", "")}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+
+                aud_btn_col, aud_player_col = st.columns([1, 3])
+                with aud_btn_col:
+                    if st.button(
+                        "🔊 Listen",
+                        key=f"play_btn_{phrase_key}",
+                        use_container_width=True,
+                    ):
+                        try:
+                            with st.spinner("Generating audio..."):
+                                st.session_state.phrasebook_audio[phrase_key] = (
+                                    generate_audio(german_line, slow_mode=slow_audio)
+                                )
+                        except Exception as audio_err:
+                            st.caption(f"Audio unavailable: {audio_err}")
+
+                with aud_player_col:
+                    if phrase_key in st.session_state.phrasebook_audio:
+                        st.audio(
+                            st.session_state.phrasebook_audio[phrase_key],
+                            format="audio/mp3",
+                        )
