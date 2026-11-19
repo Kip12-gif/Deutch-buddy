@@ -102,6 +102,14 @@ st.markdown(
         border-radius: 8px;
         margin-bottom: 8px;
     }
+    .ref-card {
+        background-color: #161B22;
+        border: 1px solid #30363D;
+        border-left: 4px solid #82E0AA;
+        padding: 12px 14px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
 </style>
 """,
     unsafe_allow_html=True,
@@ -122,6 +130,274 @@ DIALECT_MAP = {
     "Austrian German": "de-AT",
     "Swiss German": "de-CH",
 }
+
+# --- LEARNER REFERENCE DATASETS (50+ ITEMS PER CATEGORY) ---
+COMMON_NOUNS_50 = [
+    ("der", "Apfel", "Äpfel", "apple"),
+    ("das", "Brot", "Brote", "bread"),
+    ("das", "Wasser", "Wässer", "water"),
+    ("der", "Kaffee", "Kaffees", "coffee"),
+    ("der", "Tee", "Tees", "tea"),
+    ("die", "Milch", "—", "milk"),
+    ("der", "Tisch", "Tische", "table"),
+    ("der", "Stuhl", "Stühle", "chair"),
+    ("das", "Haus", "Häuser", "house"),
+    ("die", "Wohnung", "Wohnungen", "apartment"),
+    ("das", "Zimmer", "Zimmer", "room"),
+    ("die", "Küche", "Küchen", "kitchen"),
+    ("das", "Bett", "Betten", "bed"),
+    ("die", "Tür", "Türen", "door"),
+    ("das", "Fenster", "Fenster", "window"),
+    ("der", "Schlüssel", "Schlüssel", "key"),
+    ("die", "Stadt", "Städte", "city"),
+    ("das", "Land", "Länder", "country"),
+    ("die", "Straße", "Straßen", "street"),
+    ("der", "Platz", "Plätze", "square / place"),
+    ("die", "Brücke", "Brücken", "bridge"),
+    ("der", "Park", "Parks", "park"),
+    ("die", "Karte", "Karten", "map / card"),
+    ("der", "Zug", "Züge", "train"),
+    ("der", "Bahnhof", "Bahnhöfe", "train station"),
+    ("der", "Bus", "Busse", "bus"),
+    ("das", "Auto", "Autos", "car"),
+    ("das", "Fahrrad", "Fahrräder", "bicycle"),
+    ("das", "Flugzeug", "Flugzeuge", "airplane"),
+    ("der", "Flughafen", "Flughäfen", "airport"),
+    ("die", "Fahrkarte", "Fahrkarten", "ticket"),
+    ("das", "Hotel", "Hotels", "hotel"),
+    ("das", "Restaurant", "Restaurants", "restaurant"),
+    ("das", "Geschäft", "Geschäfte", "shop / store"),
+    ("die", "Schule", "Schulen", "school"),
+    ("die", "Universität", "Universitäten", "university"),
+    ("das", "Büro", "Büros", "office"),
+    ("die", "Arbeit", "Arbeiten", "work"),
+    ("das", "Projekt", "Projekte", "project"),
+    ("der", "Computer", "Computer", "computer"),
+    ("das", "Telefon", "Telefone", "phone"),
+    ("das", "Buch", "Bücher", "book"),
+    ("die", "Zeitung", "Zeitungen", "newspaper"),
+    ("das", "Geld", "Gelder", "money"),
+    ("der", "Preis", "Preise", "price"),
+    ("der", "Mann", "Männer", "man"),
+    ("die", "Frau", "Frauen", "woman"),
+    ("das", "Kind", "Kinder", "child"),
+    ("die", "Familie", "Familien", "family"),
+    ("der", "Freund", "Freunde", "friend"),
+    ("die", "Zeit", "Zeiten", "time"),
+    ("der", "Tag", "Tage", "day"),
+]
+
+COMMON_ADJECTIVES_50 = [
+    ("gut", "besser", "am besten", "good"),
+    ("schlecht", "schlechter", "am schlechtesten", "bad"),
+    ("groß", "größer", "am größten", "big / tall"),
+    ("klein", "kleiner", "am kleinsten", "small"),
+    ("neu", "neuer", "am neuesten", "new"),
+    ("alt", "älter", "am ältesten", "old"),
+    ("jung", "jünger", "am jüngsten", "young"),
+    ("schön", "schöner", "am schönsten", "beautiful / nice"),
+    ("schnell", "schneller", "am schnellsten", "fast"),
+    ("langsam", "langsamer", "am langsamsten", "slow"),
+    ("lang", "länger", "am längsten", "long"),
+    ("kurz", "kürzer", "am kürzesten", "short"),
+    ("hoch", "höher", "am höchsten", "high / tall"),
+    ("tief", "tiefer", "am tiefsten", "deep / low"),
+    ("heiß", "heißer", "am heißesten", "hot"),
+    ("warm", "wärmer", "am wärmsten", "warm"),
+    ("kalt", "kälter", "am kältesten", "cold"),
+    ("teuer", "teurer", "am teuersten", "expensive"),
+    ("billig", "billiger", "am billigsten", "cheap / inexpensive"),
+    ("frei", "freier", "am freiesten", "free / available"),
+    ("offen", "offener", "am offensten", "open"),
+    ("geschlossen", "geschlossener", "am geschlossensten", "closed"),
+    ("einfach", "einfacher", "am einfachsten", "easy / simple"),
+    ("schwierig", "schwieriger", "am schwierigsten", "difficult"),
+    ("wichtig", "wichtiger", "am wichtigsten", "important"),
+    ("richtig", "richtiger", "am richtigsten", "correct / right"),
+    ("falsch", "falscher", "am falschesten", "wrong / false"),
+    ("glücklich", "glücklicher", "am glücklichsten", "happy"),
+    ("traurig", "trauriger", "am traurigsten", "sad"),
+    ("müde", "müder", "am müdesten", "tired"),
+    ("wach", "wacher", "am wachsten", "awake"),
+    ("hungrig", "hungriger", "am hungrigsten", "hungry"),
+    ("durstig", "durstiger", "am durstigsten", "thirsty"),
+    ("gesund", "gesünder", "am gesündesten", "healthy"),
+    ("krank", "kränker", "am kränksten", "sick / ill"),
+    ("stark", "stärker", "am stärksten", "strong"),
+    ("schwach", "schwächer", "am schwächsten", "weak"),
+    ("laut", "lauter", "am lautesten", "loud"),
+    ("leise", "leiser", "am leisesten", "quiet"),
+    ("hell", "heller", "am hellsten", "bright / light"),
+    ("dunkel", "dunkler", "am dunkelsten", "dark"),
+    ("sauber", "sauberer", "am saubersten", "clean"),
+    ("schmutzig", "schmutziger", "am schmutzigsten", "dirty"),
+    ("voll", "voller", "am vollsten", "full"),
+    ("leer", "leer", "am leersten", "empty"),
+    ("freundlich", "freundlicher", "am freundlichsten", "friendly"),
+    ("höflich", "höflicher", "am höflichsten", "polite"),
+    ("klar", "klarer", "am klarsten", "clear"),
+    ("sicher", "sicherer", "am sichersten", "safe / sure"),
+    ("lecker", "leckerer", "am leckersten", "delicious / tasty"),
+]
+
+COMMON_PREPOSITIONS_50 = [
+    ("mit", "Dative", "with", "Ich trinke Kaffee mit Milch."),
+    ("nach", "Dative", "to / after", "Ich fahre nach Berlin."),
+    ("aus", "Dative", "out of / from", "Sie kommt aus Kenia."),
+    ("zu", "Dative", "to (person/place)", "Ich gehe zum Bahnhof."),
+    ("bei", "Dative", "at / near / with", "Er wohnt bei seinen Eltern."),
+    ("von", "Dative", "from / of", "Das Buch von meinem Freund."),
+    ("seit", "Dative", "since / for (time)", "Ich lerne seit einem Jahr Deutsch."),
+    ("außer", "Dative", "except / besides", "Alle außer mir sind da."),
+    ("gegenüber", "Dative", "opposite", "Die Bank ist gegenüber dem Park."),
+    ("durch", "Accusative", "through", "Wir gehen durch den Park."),
+    ("für", "Accusative", "for", "Das Geschenk ist für dich."),
+    ("gegen", "Accusative", "against / around (time)", "Wir treffen uns gegen acht Uhr."),
+    ("ohne", "Accusative", "without", "Ich trinke Tee ohne Zucker."),
+    ("um", "Accusative", "around / at (clock time)", "Der Zug kommt um neun Uhr."),
+    ("bis", "Accusative", "until / up to", "Bis morgen!"),
+    ("entlang", "Accusative / Dative", "along", "Gehen Sie die Straße entlang."),
+    ("in", "Two-Way (Acc/Dat)", "in / into", "In der Stadt (Dat) / In die Stadt (Acc)."),
+    ("an", "Two-Way (Acc/Dat)", "at / on (vertical)", "An der Tür (Dat) / An die Wand (Acc)."),
+    ("auf", "Two-Way (Acc/Dat)", "on (horizontal surface)", "Auf dem Tisch (Dat) / Auf den Tisch (Acc)."),
+    ("über", "Two-Way (Acc/Dat)", "over / above / about", "Über das Thema sprechen (Acc)."),
+    ("unter", "Two-Way (Acc/Dat)", "under / below / among", "Unter dem Bett (Dat) / Unter das Bett (Acc)."),
+    ("vor", "Two-Way (Acc/Dat)", "in front of / before", "Vor dem Haus (Dat) / Vor zehn Minuten (Dat)."),
+    ("hinter", "Two-Way (Acc/Dat)", "behind", "Hinter dem Zug (Dat) / Hinter den Zug (Acc)."),
+    ("neben", "Two-Way (Acc/Dat)", "next to", "Neben der Schule (Dat) / Neben die Lampe (Acc)."),
+    ("zwischen", "Two-Way (Acc/Dat)", "between", "Zwischen uns (Dat) / Zwischen zwei Stühle (Acc)."),
+    ("während", "Genitive", "during", "Während der Reise habe ich gelesen."),
+    ("wegen", "Genitive", "because of", "Wegen des Regens bleiben wir hier."),
+    ("trotz", "Genitive", "despite / in spite of", "Trotz des Lärms schlief er."),
+    ("statt", "Genitive", "instead of", "Statt eines Autos fährt sie Rad."),
+    ("anstatt", "Genitive", "instead of", "Anstatt Kaffee trinkt er Wasser."),
+    ("innerhalb", "Genitive", "within / inside", "Innerhalb einer Woche."),
+    ("außerhalb", "Genitive", "outside of", "Außerhalb der Stadt."),
+    ("zum", "Dative contraction", "to the (zu + dem)", "Wir gehen zum Arzt."),
+    ("zur", "Dative contraction", "to the (zu + der)", "Sie fährt zur Arbeit."),
+    ("im", "Dative contraction", "in the (in + dem)", "Er ist im Büro."),
+    ("ins", "Accusative contraction", "into the (in + das)", "Wir gehen ins Kino."),
+    ("am", "Dative contraction", "at/on the (an + dem)", "Am Montag haben wir Zeit."),
+    ("ans", "Accusative contraction", "to/on the (an + das)", "Ich denke ans Wochenende."),
+    ("vom", "Dative contraction", "from the (von + dem)", "Vom Bahnhof sind es fünf Minuten."),
+    ("beim", "Dative contraction", "at/while (bei + dem)", "Beim Essen sprechen wir Deutsch."),
+    ("überm", "Accusative contraction", "over the (über + dem)", "Die Lampe hängt überm Tisch."),
+    ("unterm", "Dative contraction", "under the (unter + dem)", "Der Ball liegt unterm Stuhl."),
+    ("vorm", "Dative contraction", "in front of the (vor + dem)", "Wir warten vorm Hotel."),
+    ("hinterm", "Dative contraction", "behind the (hinter + dem)", "Der Garten liegt hinterm Haus."),
+    ("ab", "Dative / Accusative", "from / starting (time/place)", "Ab nächsten Monat."),
+    ("samt", "Dative", "together with", "Samt Gepäck eingestiegen."),
+    ("nahe", "Dative", "near / close to", "Nahe dem Zentrum."),
+    ("gemäß", "Dative", "according to", "Den Regeln gemäß."),
+    ("dank", "Genitive / Dative", "thanks to", "Dank deiner Hilfe."),
+    ("zufolge", "Dative (after noun)", "according to", "Dem Bericht zufolge."),
+]
+
+CONJUGATED_VERBS_50 = [
+    ("sein (to be)", "bin", "bist", "ist", "sind", "sind"),
+    ("haben (to have)", "habe", "hast", "hat", "haben", "haben"),
+    ("werden (to become)", "werde", "wirst", "wird", "werden", "werden"),
+    ("gehen (to go)", "gehe", "gehst", "geht", "gehen", "gehen"),
+    ("kommen (to come)", "komme", "kommst", "kommt", "kommen", "kommen"),
+    ("machen (to do / make)", "mache", "machst", "macht", "machen", "machen"),
+    ("sehen (to see)", "sehe", "siehst", "sieht", "sehen", "sehen"),
+    ("hören (to hear / listen)", "höre", "hörst", "hört", "hören", "hören"),
+    ("sprechen (to speak)", "spreche", "sprichst", "spricht", "sprechen", "sprechen"),
+    ("sagen (to say)", "sage", "sagst", "sagt", "sagen", "sagen"),
+    ("fragen (to ask)", "frage", "fragst", "fragt", "fragen", "fragen"),
+    ("antworten (to answer)", "antworte", "antwortest", "antwortet", "antworten", "antworten"),
+    ("verstehen (to understand)", "verstehe", "verstehst", "versteht", "verstehen", "verstehen"),
+    ("wissen (to know facts)", "weiß", "weißt", "weiß", "wissen", "wissen"),
+    ("kennen (to know people/places)", "kenne", "kennst", "kennt", "kennen", "kennen"),
+    ("lernen (to learn)", "lerne", "lernst", "lernt", "lernen", "lernen"),
+    ("lesen (to read)", "lese", "liest", "liest", "lesen", "lesen"),
+    ("schreiben (to write)", "schreibe", "schreibst", "schreibt", "schreiben", "schreiben"),
+    ("essen (to eat)", "esse", "isst", "isst", "essen", "essen"),
+    ("trinken (to drink)", "trinke", "trinkst", "trinkt", "trinken", "trinken"),
+    ("kaufen (to buy)", "kaufe", "kaufst", "kauft", "kaufen", "kaufen"),
+    ("bezahlen (to pay)", "bezahle", "bezahlst", "bezahlt", "bezahlen", "bezahlen"),
+    ("arbeiten (to work)", "arbeite", "arbeitest", "arbeitet", "arbeiten", "arbeiten"),
+    ("wohnen (to live/reside)", "wohne", "wohnst", "wohnt", "wohnen", "wohnen"),
+    ("leben (to live/be alive)", "lebe", "lebst", "lebt", "leben", "leben"),
+    ("schlafen (to sleep)", "schlafe", "schläfst", "schläft", "schlafen", "schlafenn"),
+    ("fahren (to drive/travel)", "fahre", "fährst", "fährt", "fahren", "fahren"),
+    ("fliegen (to fly)", "fliege", "fliegst", "fliegt", "fliegen", "fliegen"),
+    ("laufen (to run/walk)", "laufe", "läufst", "läuft", "laufen", "laufen"),
+    ("finden (to find)", "finde", "findest", "findet", "finden", "finden"),
+    ("geben (to give)", "gebe", "gibst", "gibt", "geben", "geben"),
+    ("nehmen (to take)", "nehme", "nimmst", "nimmt", "nehmen", "nehmen"),
+    ("helfen (to help)", "helfe", "hilfst", "hilft", "helfen", "helfen"),
+    ("brauchen (to need)", "brauche", "brauchst", "braucht", "brauchen", "brauchen"),
+    ("wollen (to want)", "will", "willst", "will", "wollen", "wollen"),
+    ("können (can / be able)", "kann", "kannst", "kann", "können", "können"),
+    ("müssen (must / have to)", "muss", "musst", "muss", "müssen", "müssen"),
+    ("sollen (should / ought)", "soll", "sollst", "soll", "sollen", "sollen"),
+    ("dürfen (may / be allowed)", "darf", "darfst", "darf", "dürfen", "dürfen"),
+    ("mögen (to like)", "mag", "magst", "mag", "mögen", "mögen"),
+    ("spielen (to play)", "spiele", "spielst", "spielt", "spielen", "spielen"),
+    ("kochen (to cook)", "koche", "kochst", "kocht", "kochen", "kochen"),
+    ("öffnen (to open)", "öffne", "öffnest", "öffnet", "öffnen", "öffnen"),
+    ("schließen (to close)", "schließe", "schließt", "schließt", "schließen", "schließen"),
+    ("beginnen (to begin)", "beginne", "beginnst", "beginnt", "beginnen", "beginnen"),
+    ("warten (to wait)", "warte", "wartest", "wartet", "warten", "warten"),
+    ("helfen", "helfe", "hilfst", "hilft", "helfen", "helfen"),
+    ("zeigen (to show)", "zeige", "zeigst", "zeigt", "zeigen", "zeigen"),
+    ("suchen (to search / look for)", "suche", "suchst", "sucht", "suchen", "suchen"),
+    ("treffen (to meet)", "treffe", "triffst", "trifft", "treffen", "treffen"),
+]
+
+COMMON_PRONOUNS_50 = [
+    ("ich", "Personal (Nom)", "I", "Ich lerne Deutsch."),
+    ("mich", "Personal (Acc)", "me", "Sie sieht mich."),
+    ("mir", "Personal (Dat)", "me / to me", "Hilf mir bitte."),
+    ("du", "Personal (Nom)", "you (informal sg.)", "Woher kommst du?"),
+    ("dich", "Personal (Acc)", "you (informal sg.)", "Ich verstehe dich."),
+    ("dir", "Personal (Dat)", "you / to you (inf.)", "Wie geht es dir?"),
+    ("er", "Personal (Nom)", "he", "Er arbeitet hier."),
+    ("ihn", "Personal (Acc)", "him", "Ich kenne ihn."),
+    ("ihm", "Personal (Dat)", "him / to him", "Ich gebe ihm das Buch."),
+    ("sie (sg.)", "Personal (Nom)", "she", "Sie kommt aus Berlin."),
+    ("sie (sg. Acc)", "Personal (Acc)", "her", "Ich sehe sie."),
+    ("ihr (sg. Dat)", "Personal (Dat)", "her / to her", "Ich antworte ihr."),
+    ("es", "Personal (Nom/Acc)", "it", "Es regnet heute."),
+    ("ihm (neut. Dat)", "Personal (Dat)", "it / to it", "Das passt ihm gut."),
+    ("wir", "Personal (Nom)", "we", "Wir reisen morgen."),
+    ("uns", "Personal (Acc/Dat)", "us / to us", "Besuch uns bald!"),
+    ("ihr (pl.)", "Personal (Nom)", "you all (informal pl.)", "Habt ihr Zeit?"),
+    ("euch", "Personal (Acc/Dat)", "you all / to you all", "Ich danke euch."),
+    ("sie (pl.)", "Personal (Nom)", "they", "Sie lernen zusammen."),
+    ("sie (pl. Acc)", "Personal (Acc)", "them", "Ich rufe sie an."),
+    ("ihnen (pl. Dat)", "Personal (Dat)", "them / to them", "Ich erkläre ihnen das."),
+    ("Sie (formal)", "Personal (Nom/Acc)", "you (formal)", "Wie heißen Sie?"),
+    ("Ihnen (formal)", "Personal (Dat)", "you / to you (formal)", "Wie geht es Ihnen?"),
+    ("mein / meine", "Possessive", "my", "Das ist mein Freund."),
+    ("dein / deine", "Possessive", "your (informal sg.)", "Wo ist deine Tasche?"),
+    ("sein / seine", "Possessive", "his / its", "Er sucht sein Handy."),
+    ("ihr / ihre", "Possessive", "her / their", "Sie liest ihr Buch."),
+    ("unser / unsere", "Possessive", "our", "Unser Zug fährt gleich."),
+    ("euer / eure", "Possessive", "your (informal pl.)", "Euer Haus ist groß."),
+    ("Ihr / Ihre", "Possessive (Formal)", "your (formal)", "Ist das Ihr Kaffee?"),
+    ("wer", "Interrogative (Nom)", "who", "Wer kommt mit?"),
+    ("wen", "Interrogative (Acc)", "whom", "Wen triffst du heute?"),
+    ("wem", "Interrogative (Dat)", "to whom", "Wem gehört das?"),
+    ("wessen", "Interrogative (Gen)", "whose", "Wessen Buch ist das?"),
+    ("was", "Interrogative", "what", "Was machst du?"),
+    ("welcher / welche / welches", "Interrogative", "which", "Welcher Zug ist das?"),
+    ("dieser / diese / dieses", "Demonstrative", "this", "Dieses Ticket ist gültig."),
+    ("jener / jene / jenes", "Demonstrative", "that (distant)", "Jenes Gebäude ist alt."),
+    ("der / die / das (dem.)", "Demonstrative", "that one / the", "Das ist richtig."),
+    ("man", "Indefinite", "one / people / they", "Hier spricht man Deutsch."),
+    ("jemand", "Indefinite", "someone", "Ist jemand da?"),
+    ("niemand", "Indefinite", "no one", "Niemand hat angerufen."),
+    ("etwas", "Indefinite", "something", "Möchtest du etwas trinken?"),
+    ("nichts", "Indefinite", "nothing", "Ich habe nichts gehört."),
+    ("alles", "Indefinite", "everything", "Alles ist bereit."),
+    ("jeder / jede / jedes", "Indefinite", "each / every", "Jeder Tag ist neu."),
+    ("einige / manche", "Indefinite", "some / several", "Einige Gäste sind da."),
+    ("alle", "Indefinite", "all / everyone", "Alle sind willkommen."),
+    ("sich", "Reflexive", "himself/herself/themselves", "Er wäscht sich."),
+    ("einander", "Reciprocal", "each other", "Wir helfen einander."),
+]
 
 
 # --- DATA LOADING (UTF-8-SIG SAFE & ERROR-RESILIENT) ---
@@ -403,8 +679,10 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# --- TABS: TRANSLATOR & PHRASEBOOK BROWSER ---
-tab_translate, tab_phrasebook = st.tabs(["Translator & Lookup", "Starter Phrasebook"])
+# --- TABS: TRANSLATOR, STARTER PHRASEBOOK & GRAMMAR REFERENCE ---
+tab_translate, tab_phrasebook, tab_reference = st.tabs(
+    ["Translator & Lookup", "Starter Phrasebook", "Grammar & Vocab Bar"]
+)
 
 with tab_translate:
     st.caption("Try an instant offline phrase:")
@@ -649,3 +927,100 @@ with tab_phrasebook:
                             st.session_state.phrasebook_audio[phrase_key],
                             format="audio/mp3",
                         )
+
+with tab_reference:
+    st.markdown("#### AI Study & Grammar Reference Bar (50+ Entries per Category)")
+    st.caption(
+        "Quick-scan reference for nouns, adjectives, prepositions, conjugated verbs, and pronouns."
+    )
+
+    ref_filter = st.text_input(
+        "Filter reference tables by keyword",
+        placeholder="Type a German or English word, case (Dative, Accusative), or pronoun...",
+        key="ref_search_box",
+    ).strip().lower()
+
+    part_of_speech = st.radio(
+        "Select Word Class",
+        options=[
+            f"Nouns ({len(COMMON_NOUNS_50)})",
+            f"Adjectives ({len(COMMON_ADJECTIVES_50)})",
+            f"Prepositions ({len(COMMON_PREPOSITIONS_50)})",
+            f"Conjugated Verbs ({len(CONJUGATED_VERBS_50)})",
+            f"Pronouns ({len(COMMON_PRONOUNS_50)})",
+        ],
+        horizontal=True,
+    )
+
+    if part_of_speech.startswith("Nouns"):
+        rows = [
+            {"Article": art, "Noun": noun, "Plural": plur, "English": en}
+            for art, noun, plur, en in COMMON_NOUNS_50
+            if not ref_filter
+            or ref_filter in f"{art} {noun} {plur} {en}".lower()
+        ]
+        st.markdown(f"**Showing {len(rows)} common nouns**")
+        st.dataframe(rows, use_container_width=True, hide_index=True)
+
+    elif part_of_speech.startswith("Adjectives"):
+        rows = [
+            {
+                "Base": base,
+                "Comparative": comp,
+                "Superlative": sup,
+                "English": en,
+            }
+            for base, comp, sup, en in COMMON_ADJECTIVES_50
+            if not ref_filter
+            or ref_filter in f"{base} {comp} {sup} {en}".lower()
+        ]
+        st.markdown(f"**Showing {len(rows)} common adjectives**")
+        st.dataframe(rows, use_container_width=True, hide_index=True)
+
+    elif part_of_speech.startswith("Prepositions"):
+        rows = [
+            {
+                "Preposition": prep,
+                "Case": case_rule,
+                "English": en,
+                "Example": example,
+            }
+            for prep, case_rule, en, example in COMMON_PREPOSITIONS_50
+            if not ref_filter
+            or ref_filter in f"{prep} {case_rule} {en} {example}".lower()
+        ]
+        st.markdown(f"**Showing {len(rows)} common prepositions**")
+        st.dataframe(rows, use_container_width=True, hide_index=True)
+
+    elif part_of_speech.startswith("Conjugated Verbs"):
+        rows = [
+            {
+                "Infinitive": inf,
+                "ich": ich_f,
+                "du": du_f,
+                "er/sie/es": er_f,
+                "wir": wir_f,
+                "Sie": sie_f,
+            }
+            for inf, ich_f, du_f, er_f, wir_f, sie_f in CONJUGATED_VERBS_50
+            if not ref_filter
+            or ref_filter
+            in f"{inf} {ich_f} {du_f} {er_f} {wir_f} {sie_f}".lower()
+        ]
+        st.markdown(f"**Showing {len(rows)} conjugated verbs (present tense)**")
+        st.dataframe(rows, use_container_width=True, hide_index=True)
+
+    else:
+        rows = [
+            {
+                "Pronoun": pron,
+                "Type / Case": p_type,
+                "English": en,
+                "Example": example,
+            }
+            for pron, p_type, en, example in COMMON_PRONOUNS_50
+            if not ref_filter
+            or ref_filter in f"{pron} {p_type} {en} {example}".lower()
+        ]
+        st.markdown(f"**Showing {len(rows)} common pronouns**")
+        st.dataframe(rows, use_container_width=True, hide_index=True)
