@@ -1,0 +1,98 @@
+﻿[
+  {
+    "id": "greet_1",
+    "category": "Greetings & Politeness",
+    "en": "Hello, how are you?",
+    "du": "Hallo, wie geht es dir?",
+    "sie": "Guten Tag, wie geht es Ihnen?",
+    "note": "German uses 'dir' (dative of du) informally and 'Ihnen' (dative of Sie) formally."
+  },
+  {
+    "id": "greet_2",
+    "category": "Greetings & Politeness",
+    "en": "Nice to meet you! Where are you from?",
+    "du": "Schön, dich kennenzulernen! Woher kommst du?",
+    "sie": "Freut mich, Sie kennenzulernen! Woher kommen Sie?",
+    "note": "'Woher' asks about origin; notice the verb ending '-st' for du vs. '-en' for Sie."
+  },
+  {
+    "id": "greet_3",
+    "category": "Greetings & Politeness",
+    "en": "Thank you very much for your help.",
+    "du": "Vielen Dank für deine Hilfe.",
+    "sie": "Vielen Dank für Ihre Hilfe.",
+    "note": "'Hilfe' is feminine (die Hilfe), so 'your' takes the '-e' ending (deine / Ihre)."
+  },
+  {
+    "id": "greet_4",
+    "category": "Greetings & Politeness",
+    "en": "Excuse me, do you speak English?",
+    "du": "Entschuldigung, sprichst du Englisch?",
+    "sie": "Entschuldigen Sie, sprechen Sie Englisch?",
+    "note": "'Sprechen' is a stem-changing verb in the du-form (e → i: sprichst)."
+  },
+  {
+    "id": "cafe_1",
+    "category": "Café & Dining",
+    "en": "Could I please have a large coffee with oat milk?",
+    "du": "Kann ich bitte einen großen Kaffee mit Hafermilch haben?",
+    "sie": "Könnte ich bitte einen großen Kaffee mit Hafermilch haben?",
+    "note": "'Könnte' (could) sounds softer and more polite when ordering at a counter."
+  },
+  {
+    "id": "cafe_2",
+    "category": "Café & Dining",
+    "en": "The bill, please.",
+    "du": "Die Rechnung, bitte.",
+    "sie": "Die Rechnung, bitte.",
+    "note": "Same in both registers; in Germany, you usually ask the server directly for 'die Rechnung'."
+  },
+  {
+    "id": "cafe_3",
+    "category": "Café & Dining",
+    "en": "Do you have a table for two?",
+    "du": "Hast du einen Tisch für zwei?",
+    "sie": "Haben Sie einen Tisch für zwei?",
+    "note": "'Tisch' is masculine (der Tisch), changing to 'einen Tisch' in the accusative case."
+  },
+  {
+    "id": "travel_1",
+    "category": "Directions & Travel",
+    "en": "Excuse me, how do I get to the central train station?",
+    "du": "Entschuldigung, wie komme ich zum Hauptbahnhof?",
+    "sie": "Entschuldigen Sie bitte, wie komme ich zum Hauptbahnhof?",
+    "note": "'Zum' is a contraction of 'zu dem' (dative masculine for der Hauptbahnhof)."
+  },
+  {
+    "id": "travel_2",
+    "category": "Directions & Travel",
+    "en": "Where is the nearest subway station?",
+    "du": "Wo ist die nächste U-Bahn-Station?",
+    "sie": "Wo ist die nächste U-Bahn-Station?",
+    "note": "'U-Bahn' stands for Untergrundbahn (underground railway)."
+  },
+  {
+    "id": "travel_3",
+    "category": "Directions & Travel",
+    "en": "Can you show me that on the map?",
+    "du": "Kannst du mir das auf der Karte zeigen?",
+    "sie": "Können Sie mir das auf der Karte zeigen?",
+    "note": "'Karte' is feminine (die Karte), shifting to 'der Karte' after 'auf' (location)."
+  },
+  {
+    "id": "daily_1",
+    "category": "Everyday Conversation",
+    "en": "I am learning German and practicing every day.",
+    "du": "Ich lerne Deutsch und übe jeden Tag.",
+    "sie": "Ich lerne Deutsch und übe jeden Tag.",
+    "note": "Languages are not preceded by an article here: 'Ich lerne Deutsch'."
+  },
+  {
+    "id": "daily_2",
+    "category": "Everyday Conversation",
+    "en": "Could you please repeat that slowly?",
+    "du": "Kannst du das bitte langsam wiederholen?",
+    "sie": "Können Sie das bitte langsam wiederholen?",
+    "note": "Modal verbs (können) push the main infinitive verb (wiederholen) to the very end."
+  }
+]
