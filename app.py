@@ -122,7 +122,7 @@ DIALECT_MAP = {
 }
 
 
-# --- DATA LOADING (CHECKS BOTH data/ AND ROOT DIRECTORY) ---
+# --- DATA LOADING (UTF-8-SIG SAFE & ERROR-RESILIENT) ---
 def resolve_data_path(filename: str) -> Path | None:
     base_dir = Path(__file__).parent
     candidates = [base_dir / "data" / filename, base_dir / filename]
@@ -132,25 +132,62 @@ def resolve_data_path(filename: str) -> Path | None:
     return None
 
 
+def safe_load_json(filename: str, fallback):
+    path = resolve_data_path(filename)
+    if not path:
+        return fallback, f"{filename} not found (using built-in fallback)."
+    try:
+        # utf-8-sig automatically strips any UTF-8 Byte Order Mark (BOM)
+        with open(path, "r", encoding="utf-8-sig") as f:
+            data = json.load(f)
+        if not isinstance(data, type(fallback)):
+            return fallback, f"{filename} had an unexpected JSON structure (using fallback)."
+        return data, None
+    except Exception as exc:
+        return fallback, f"Could not parse {filename}: {exc}"
+
+
+FALLBACK_PHRASES = [
+    {
+        "id": "greet_1",
+        "category": "Greetings & Politeness",
+        "en": "Hello, how are you?",
+        "du": "Hallo, wie geht es dir?",
+        "sie": "Guten Tag, wie geht es Ihnen?",
+        "note": "Built-in fallback phrase while phrases.json is being checked.",
+    },
+    {
+        "id": "cafe_1",
+        "category": "Café & Dining",
+        "en": "Could I please have a large coffee with oat milk?",
+        "du": "Kann ich bitte einen großen Kaffee mit Hafermilch haben?",
+        "sie": "Könnte ich bitte einen großen Kaffee mit Hafermilch haben?",
+        "note": "'Könnte' sounds polite and natural when ordering.",
+    },
+]
+
+FALLBACK_DICT = {
+    "coffee": {"de": "Kaffee", "pos": "noun", "article": "der", "plural": "Kaffees"},
+    "water": {"de": "Wasser", "pos": "noun", "article": "das", "plural": "Wässer"},
+    "train": {"de": "Zug", "pos": "noun", "article": "der", "plural": "Züge"},
+}
+
+
 @st.cache_data(show_spinner=False)
-def load_offline_resources() -> tuple[list[dict], dict]:
-    phrases: list[dict] = []
-    dictionary: dict = {}
+def load_offline_resources() -> tuple[list[dict], dict, list[str]]:
+    warnings: list[str] = []
+    phrases, p_warn = safe_load_json("phrases.json", FALLBACK_PHRASES)
+    if p_warn:
+        warnings.append(p_warn)
 
-    phrases_path = resolve_data_path("phrases.json")
-    if phrases_path:
-        with open(phrases_path, "r", encoding="utf-8") as f:
-            phrases = json.load(f)
+    dictionary, d_warn = safe_load_json("dictionary.json", FALLBACK_DICT)
+    if d_warn:
+        warnings.append(d_warn)
 
-    dict_path = resolve_data_path("dictionary.json")
-    if dict_path:
-        with open(dict_path, "r", encoding="utf-8") as f:
-            dictionary = json.load(f)
-
-    return phrases, dictionary
+    return phrases, dictionary, warnings
 
 
-PHRASES_DATA, DICT_DATA = load_offline_resources()
+PHRASES_DATA, DICT_DATA, DATA_WARNINGS = load_offline_resources()
 
 
 # --- TEXT NORMALIZATION & LOOKUP HELPERS ---
@@ -158,24 +195,6 @@ def normalize_text(text: str) -> str:
     cleaned = text.strip().lower()
     cleaned = re.sub(r"[^\w\s']", "", cleaned)
     return re.sub(r"\s+", " ", cleaned)
-
-
-def lookup_phrasebook(english_text: str, tone: str, phrases: list[dict]) -> dict | None:
-    norm_query = normalize_text(english_text)
-    if not norm_query:
-        return None
-
-    for entry in phrases:
-        if normalize_text(entry.get("en", "")) == norm_query:
-            german = entry["du"] if tone == "Informal (Du)" else entry["sie"]
-            return {
-                "en": entry["en"],
-                "de": german,
-                "source": f"Offline Phrasebook • {entry.get('category', 'General')}",
-                "note": entry.get("note", ""),
-                "matched_words": extract_known_words_from_en(english_text, DICT_DATA),
-            }
-    return None
 
 
 def extract_known_words_from_en(english_text: str, dictionary: dict) -> list[dict]:
@@ -200,12 +219,31 @@ def extract_known_words_from_en(english_text: str, dictionary: dict) -> list[dic
     return found
 
 
+def lookup_phrasebook(english_text: str, tone: str, phrases: list[dict]) -> dict | None:
+    norm_query = normalize_text(english_text)
+    if not norm_query:
+        return None
+
+    for entry in phrases:
+        if normalize_text(entry.get("en", "")) == norm_query:
+            german = entry.get("du") if tone == "Informal (Du)" else entry.get("sie")
+            if not german:
+                german = entry.get("du") or entry.get("sie") or ""
+            return {
+                "en": entry.get("en", english_text),
+                "de": german,
+                "source": f"Offline Phrasebook • {entry.get('category', 'General')}",
+                "note": entry.get("note", ""),
+                "matched_words": extract_known_words_from_en(english_text, DICT_DATA),
+            }
+    return None
+
+
 def lookup_dictionary(english_text: str, dictionary: dict) -> dict | None:
     tokens = re.findall(r"[a-zA-Z']+", english_text.lower())
     if not tokens:
         return None
 
-    # Single-word exact match
     if len(tokens) == 1 and tokens[0] in dictionary:
         entry = dictionary[tokens[0]]
         article = entry.get("article", "")
@@ -228,7 +266,6 @@ def lookup_dictionary(english_text: str, dictionary: dict) -> dict | None:
             ],
         }
 
-    # Multi-word partial gloss if at least one word exists in dictionary
     matched_words = extract_known_words_from_en(english_text, dictionary)
     if matched_words:
         glossed_tokens = []
@@ -259,7 +296,6 @@ def live_translate_fallback(text: str, target_locale: str) -> str:
 
 @st.cache_data(ttl=3600, show_spinner=False)
 def generate_audio(german_text: str, slow_mode: bool = False) -> bytes:
-    # Strip bracketed untranslated markers before speech synthesis
     clean_speech = re.sub(r"\[([^\]]+)\]", r"\1", german_text)
     tts = gTTS(text=clean_speech, lang="de", slow=slow_mode)
     buf = io.BytesIO()
@@ -320,6 +356,8 @@ with st.sidebar:
         f"Phrasebook loaded: **{len(PHRASES_DATA)}** phrases • "
         f"Dictionary loaded: **{len(DICT_DATA)}** words"
     )
+    for warn in DATA_WARNINGS:
+        st.caption(f"⚠️ {warn}")
 
     st.markdown("---")
     st.markdown("### Noun Gender Key")
@@ -428,17 +466,12 @@ with tab_translate:
                 st.warning("Please enter an English word or phrase first.")
             else:
                 st.session_state.english_draft = query
-                # 1. Check Curated Phrasebook
                 result = lookup_phrasebook(query, tone, PHRASES_DATA)
-
-                # 2. Check Offline Dictionary (exact word or partial gloss)
                 dict_result = lookup_dictionary(query, DICT_DATA)
 
-                # If it's a single word, prefer exact dictionary entry
                 if result is None and dict_result and "Exact Word Match" in dict_result["source"]:
                     result = dict_result
 
-                # 3. For multi-word sentences not in phrasebook, try live fallback if enabled
                 if result is None and use_online_fallback:
                     try:
                         with st.spinner("Checking online translator..."):
@@ -451,10 +484,8 @@ with tab_translate:
                             "matched_words": extract_known_words_from_en(query, DICT_DATA),
                         }
                     except Exception:
-                        # Gracefully fall back to offline word-by-word gloss if online fails
                         result = dict_result
 
-                # 4. Final fallback if online was disabled or failed with no dictionary hit
                 if result is None:
                     result = dict_result or {
                         "en": query,
@@ -469,7 +500,6 @@ with tab_translate:
     with col_out:
         st.markdown(f"#### Deutsch Output ({tone})")
 
-        # Re-sync Du/Sie live if current result came from phrases.json
         active = st.session_state.active_result
         if active:
             refreshed = lookup_phrasebook(active["en"], tone, PHRASES_DATA)
@@ -511,7 +541,6 @@ with tab_translate:
                         else:
                             st.toast("Already in your flashcards.", icon="ℹ️")
 
-            # Vocabulary & Noun Gender Breakdown from dictionary.json
             matched_words = active.get("matched_words", [])
             if matched_words:
                 with st.expander("Vocabulary & Noun Gender Breakdown", expanded=True):
@@ -554,13 +583,13 @@ with tab_phrasebook:
         ]
 
         for item in filtered:
-            german_line = item["du"] if tone == "Informal (Du)" else item["sie"]
+            german_line = item.get("du") if tone == "Informal (Du)" else item.get("sie")
             st.markdown(
                 f"""
                 <div class="output-card">
                     <span class="source-pill">{item.get("category", "General")} • {tone}</span>
-                    <div style="color:#A3E4D7; font-size:0.95rem; margin-bottom:4px;">🇬🇧 {item["en"]}</div>
-                    <div class="german-text">🇩🇪 {german_line}</div>
+                    <div style="color:#A3E4D7; font-size:0.95rem; margin-bottom:4px;">🇬🇧 {item.get("en", "")}</div>
+                    <div class="german-text">🇩🇪 {german_line or ""}</div>
                     <div class="meta-note">💡 {item.get("note", "")}</div>
                 </div>
                 """,
