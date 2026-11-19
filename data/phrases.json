@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "id": "greet_1",
     "category": "Greetings & Politeness",
@@ -32,6 +32,22 @@
     "note": "'Sprechen' is a stem-changing verb in the du-form (e → i: sprichst)."
   },
   {
+    "id": "greet_5",
+    "category": "Greetings & Politeness",
+    "en": "I am doing well, thanks! And you?",
+    "du": "Mir geht es gut, danke! Und dir?",
+    "sie": "Mir geht es gut, danke! Und Ihnen?",
+    "note": "Literally 'To me it goes well'—German uses the dative pronoun 'mir' here."
+  },
+  {
+    "id": "greet_6",
+    "category": "Greetings & Politeness",
+    "en": "Have a nice day!",
+    "du": "Ich wünsche dir einen schönen Tag!",
+    "sie": "Ich wünsche Ihnen einen schönen Tag!",
+    "note": "'Tag' is masculine (der Tag), becoming 'einen schönen Tag' in the accusative case."
+  },
+  {
     "id": "cafe_1",
     "category": "Café & Dining",
     "en": "Could I please have a large coffee with oat milk?",
@@ -54,6 +70,30 @@
     "du": "Hast du einen Tisch für zwei?",
     "sie": "Haben Sie einen Tisch für zwei?",
     "note": "'Tisch' is masculine (der Tisch), changing to 'einen Tisch' in the accusative case."
+  },
+  {
+    "id": "cafe_4",
+    "category": "Café & Dining",
+    "en": "A glass of still water, please.",
+    "du": "Ein Glas stilles Wasser, bitte.",
+    "sie": "Ein Glas stilles Wasser, bitte.",
+    "note": "In Germany, specify 'stilles Wasser' (still) or 'Sprudelwasser' (sparkling)."
+  },
+  {
+    "id": "cafe_5",
+    "category": "Café & Dining",
+    "en": "Can I pay by card?",
+    "du": "Kann ich mit Karte zahlen?",
+    "sie": "Kann ich mit Karte zahlen?",
+    "note": "Short for 'mit Kreditkarte' or 'mit EC-Karte'; cash ('Bargeld') is still common in smaller cafés."
+  },
+  {
+    "id": "cafe_6",
+    "category": "Café & Dining",
+    "en": "The food was delicious!",
+    "du": "Das Essen war sehr lecker!",
+    "sie": "Das Essen war sehr lecker!",
+    "note": "'Essen' is a nominalized verb (das Essen = the food) and is always neuter."
   },
   {
     "id": "travel_1",
@@ -80,6 +120,30 @@
     "note": "'Karte' is feminine (die Karte), shifting to 'der Karte' after 'auf' (location)."
   },
   {
+    "id": "travel_4",
+    "category": "Directions & Travel",
+    "en": "When does the next train leave?",
+    "du": "Wann fährt der nächste Zug ab?",
+    "sie": "Wann fährt der nächste Zug ab?",
+    "note": "'Abfahren' (to depart) is a separable verb: 'fährt' stays in position 2 and 'ab' goes to the end."
+  },
+  {
+    "id": "travel_5",
+    "category": "Directions & Travel",
+    "en": "I need a ticket to the airport.",
+    "du": "Ich brauche eine Fahrkarte zum Flughafen.",
+    "sie": "Ich brauche eine Fahrkarte zum Flughafen.",
+    "note": "'Fahrkarte' (die Fahrkarte) is feminine; 'zum Flughafen' contracts 'zu dem Flughafen'."
+  },
+  {
+    "id": "travel_6",
+    "category": "Directions & Travel",
+    "en": "Is this seat free?",
+    "du": "Ist dieser Platz frei?",
+    "sie": "Ist dieser Platz frei?",
+    "note": "Essential phrase on German ICE and regional trains when looking for an unreserved seat."
+  },
+  {
     "id": "daily_1",
     "category": "Everyday Conversation",
     "en": "I am learning German and practicing every day.",
@@ -94,5 +158,133 @@
     "du": "Kannst du das bitte langsam wiederholen?",
     "sie": "Können Sie das bitte langsam wiederholen?",
     "note": "Modal verbs (können) push the main infinitive verb (wiederholen) to the very end."
+  },
+  {
+    "id": "daily_3",
+    "category": "Everyday Conversation",
+    "en": "What does this word mean?",
+    "du": "Was bedeutet dieses Wort?",
+    "sie": "Was bedeutet dieses Wort?",
+    "note": "'Wort' is neuter (das Wort), so 'this' takes the neuter ending '-es' (dieses)."
+  },
+  {
+    "id": "daily_4",
+    "category": "Everyday Conversation",
+    "en": "I do not understand that yet.",
+    "du": "Ich verstehe das noch nicht.",
+    "sie": "Ich verstehe das noch nicht.",
+    "note": "'Noch nicht' translates cleanly to 'not yet'."
+  },
+  {
+    "id": "daily_5",
+    "category": "Everyday Conversation",
+    "en": "Do you have time tomorrow?",
+    "du": "Hast du morgen Zeit?",
+    "sie": "Haben Sie morgen Zeit?",
+    "note": "Time expressions like 'morgen' (tomorrow) typically come right after the conjugated verb."
+  },
+  {
+    "id": "daily_6",
+    "category": "Everyday Conversation",
+    "en": "What are you doing this weekend?",
+    "du": "Was machst du am Wochenende?",
+    "sie": "Was machen Sie am Wochenende?",
+    "note": "'Am Wochenende' is short for 'an dem Wochenende' (on the weekend)."
+  },
+  {
+    "id": "shop_1",
+    "category": "Shopping & Errands",
+    "en": "How much does this cost?",
+    "du": "Wie viel kostet das?",
+    "sie": "Wie viel kostet das?",
+    "note": "Use 'Wie viel kostet das?' for a single item and 'Wie viel kosten diese?' for plural items."
+  },
+  {
+    "id": "shop_2",
+    "category": "Shopping & Errands",
+    "en": "I am just looking, thank you.",
+    "du": "Ich schaue nur, danke.",
+    "sie": "Ich schaue nur, danke.",
+    "note": "Polite response when a shop assistant asks if you need assistance."
+  },
+  {
+    "id": "shop_3",
+    "category": "Shopping & Errands",
+    "en": "Do you have this in a larger size?",
+    "du": "Hast du das in einer größeren Größe?",
+    "sie": "Haben Sie das in einer größeren Größe?",
+    "note": "'Größe' is feminine (die Größe), shifting to dative 'in einer größeren Größe'."
+  },
+  {
+    "id": "shop_4",
+    "category": "Shopping & Errands",
+    "en": "Where can I find the exit?",
+    "du": "Wo finde ich den Ausgang?",
+    "sie": "Wo finde ich den Ausgang?",
+    "note": "'Ausgang' is masculine (der Ausgang), becoming 'den Ausgang' as the direct object."
+  },
+  {
+    "id": "shop_5",
+    "category": "Shopping & Errands",
+    "en": "Do you need a bag?",
+    "du": "Brauchst du eine Tüte?",
+    "sie": "Brauchen Sie eine Tüte?",
+    "note": "Supermarkets in Germany charge a small fee for shopping bags ('eine Tüte')."
+  },
+  {
+    "id": "shop_6",
+    "category": "Shopping & Errands",
+    "en": "Can I get a receipt, please?",
+    "du": "Kann ich bitte einen Kassenbon haben?",
+    "sie": "Könnte ich bitte einen Kassenbon haben?",
+    "note": "'Kassenbon' (or 'Beleg') is used for store receipts, while 'Rechnung' is used at restaurants."
+  },
+  {
+    "id": "work_1",
+    "category": "Work & Study",
+    "en": "I work as a software developer.",
+    "du": "Ich arbeite als Softwareentwickler.",
+    "sie": "Ich arbeite als Softwareentwickler.",
+    "note": "Professions after 'als' do not take an article; add '-in' for the feminine form (Softwareentwicklerin)."
+  },
+  {
+    "id": "work_2",
+    "category": "Work & Study",
+    "en": "When does our meeting start?",
+    "du": "Wann fängt unser Treffen an?",
+    "sie": "Wann fängt unsere Besprechung an?",
+    "note": "'Anfangen' (to start) splits into 'fängt ... an' in the present tense."
+  },
+  {
+    "id": "work_3",
+    "category": "Work & Study",
+    "en": "Could you send me the document by email?",
+    "du": "Kannst du mir das Dokument per E-Mail schicken?",
+    "sie": "Könnten Sie mir das Dokument per E-Mail schicken?",
+    "note": "'Per E-Mail' means 'via email' and requires no article."
+  },
+  {
+    "id": "work_4",
+    "category": "Work & Study",
+    "en": "I have a quick question about the project.",
+    "du": "Ich habe eine kurze Frage zum Projekt.",
+    "sie": "Ich habe eine kurze Frage zum Projekt.",
+    "note": "'Zum Projekt' contracts 'zu dem Projekt' (das Projekt)."
+  },
+  {
+    "id": "work_5",
+    "category": "Work & Study",
+    "en": "Let us take a short break.",
+    "du": "Lass uns eine kurze Pause machen.",
+    "sie": "Machen wir eine kurze Pause.",
+    "note": "'Pause machen' is the standard collocation for taking a break."
+  },
+  {
+    "id": "work_6",
+    "category": "Work & Study",
+    "en": "Thank you for your time today.",
+    "du": "Danke für deine Zeit heute.",
+    "sie": "Vielen Dank für Ihre heutige Zeit.",
+    "note": "In professional settings, 'Vielen Dank für Ihre Zeit' is a warm closing phrase."
   }
 ]
